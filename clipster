@@ -30,12 +30,19 @@ try:
 except ImportError:
     # py 2.x
     import ConfigParser as configparser
-    # Use this as a handy place to make some other compatibility hacks
-    # In python 2, ENOENT is sometimes IOError and sometimes OSError. Catch
-    # both by catching their immediate superclass exception EnvironmentError.
-    FileNotFoundError = EnvironmentError  # pylint: disable=redefined-builtin
-    FileExistsError = ProcessLookupError = OSError  # pylint: disable=redefined-builtin
 
+# python2 compatibility hacks
+# In python 2, ENOENT is sometimes IOError and sometimes OSError. Catch
+# both by catching their immediate superclass exception EnvironmentError.
+
+if not 'FileNotFoundError' in vars(__builtins__):
+    FileNotFoundError = EnvironmentError  # pylint: disable=redefined-builtin
+
+if not 'FileExistsError' in vars(__builtins__):
+    FileExistsError = OSError # pylint: disable=redefined-builtin
+
+if not 'ProcessLookupError' in vars(__builtins__):
+    ProcessLookupError = OSError # pylint: disable=redefined-builtin
 
 class suppress_if_errno:
     """A context manager which suppresses exceptions with an errno attribute which matches the given value.
